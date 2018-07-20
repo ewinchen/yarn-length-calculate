@@ -63,7 +63,7 @@ async function encapRules() {
 
   return {
     list: listDoc,
-    version: versionDoc.version
+    version: versionDoc ? versionDoc.version : ''
   }
 }
 
