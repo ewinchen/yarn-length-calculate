@@ -32,6 +32,12 @@ async function addNewRules(req, res, next) {
 
 }
 
+async function listMachineModel(req, res, next) {
+  const data = await CalculationService.listMachineModel();
+  res.json({ type: true, data })
+}
+
 module.exports = {
-  addNewRules
+  addNewRules,
+  listMachineModel
 }

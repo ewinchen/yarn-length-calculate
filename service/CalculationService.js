@@ -39,6 +39,11 @@ function addNewRules(data) {
 
 }
 
+function listMachineModel() {
+  return CalculationRule.distinct('machineModel');
+}
+
 module.exports = {
-  addNewRules
+  addNewRules,
+  listMachineModel
 }

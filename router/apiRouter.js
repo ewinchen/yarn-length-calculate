@@ -16,5 +16,6 @@ router.post('/updateby/:modelName', GeneralController.updateBy);
 
 // Custom Api
 router.post('/add_new_rules', CalulationController.addNewRules);
+router.get('/list_machine_model', CalulationController.listMachineModel);
 
 module.exports = router;

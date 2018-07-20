@@ -3,8 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www"
+    "start": "node ./bin/ylc",
+    "dev": "nodemon ./bin/ylc"
   },
   "dependencies": {
     "body-parser": "~1.18.2",

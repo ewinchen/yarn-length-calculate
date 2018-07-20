@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}\\bin\\www",
+      "program": "${workspaceFolder}\\bin\\ylc",
       "outputCapture": "std"
     },
     {
@@ -16,7 +16,7 @@
       "request": "launch",
       "name": "nodemon",
       "runtimeExecutable": "nodemon",
-      "program": "${workspaceFolder}/bin/www",
+      "program": "${workspaceFolder}/bin/ylc",
       "restart": true,
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"
