@@ -262,8 +262,8 @@
         var machineModel = $('#machineModel').val();
         var data = {
           machineModel: $('#machineModel').val(),
-          needleQty: $('#needleQty').val(),
-          gear: $('#gear').val(),
+          needleQty: $('#needleQty').data('kendoDropDownList').text(),
+          gear: $('#gear').data('kendoDropDownList').text(),
           yarnLength: $('#yarnLength').val(),
           degree: $('#degree').val(),
         }

@@ -37,7 +37,19 @@ async function listMachineModel(req, res, next) {
   res.json({ type: true, data })
 }
 
+async function encapRules(req, res, next) {
+
+  try {
+    const data = await CalculationService.encapRules();
+    res.json({ type: true, data: data })
+  } catch (error) {
+    next(error)
+  }
+
+}
+
 module.exports = {
   addNewRules,
-  listMachineModel
+  listMachineModel,
+  encapRules
 }

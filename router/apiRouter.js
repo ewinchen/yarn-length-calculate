@@ -15,6 +15,7 @@ router.post('/showby/:modelName', GeneralController.showBy);
 router.post('/updateby/:modelName', GeneralController.updateBy);
 
 // Custom Api
+router.get('/rules', CalulationController.encapRules)
 router.post('/add_new_rules', CalulationController.addNewRules);
 router.get('/list_machine_model', CalulationController.listMachineModel);
 

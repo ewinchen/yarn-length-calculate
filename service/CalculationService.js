@@ -1,8 +1,10 @@
 const CalculationRule = require('../dao/model/CalculationRule');
+const CalculationRuleVersion = require('../dao/model/CalculationRuleVersion');
+const uuid = require('uuid/v4');
 
 const config = require('../config/config.default');
 
-function addNewRules(data) {
+async function addNewRules(data) {
   const machineModel = data.machineModel;
   const needleQtySample = data.needleQty;
   const gearSample = data.gear;
@@ -35,7 +37,19 @@ function addNewRules(data) {
     })
   })
 
-  return CalculationRule.create(pendingData);
+  const versionDoc = await CalculationRuleVersion.findOne();
+
+  if (versionDoc) {
+    return Promise.all([
+      CalculationRuleVersion.findOneAndUpdate({}, { updateTimes: versionDoc.updateTimes + 1, version: uuid() }),
+      CalculationRule.create(pendingData)
+    ])
+  } else {
+    return Promise.all([
+      CalculationRuleVersion.create({ updateTimes: 1, version: uuid() }),
+      CalculationRule.create(pendingData)
+    ])
+  }
 
 }
 
@@ -43,7 +57,18 @@ function listMachineModel() {
   return CalculationRule.distinct('machineModel');
 }
 
+async function encapRules() {
+  const listDoc = await CalculationRule.find({}, { _id: 0, machineModel: 1, needleQty: 1, gear: 1, coefficient: 1 })
+  const versionDoc = await CalculationRuleVersion.findOne();
+
+  return {
+    list: listDoc,
+    version: versionDoc.version
+  }
+}
+
 module.exports = {
   addNewRules,
-  listMachineModel
+  listMachineModel,
+  encapRules,
 }
