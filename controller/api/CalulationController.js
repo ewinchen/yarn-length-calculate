@@ -33,7 +33,10 @@ async function addNewRules(req, res, next) {
 }
 
 async function listMachineModel(req, res, next) {
-  const data = await CalculationService.listMachineModel();
+  const _data = await CalculationService.listMachineModel();
+  const data = _data.map(item => {
+    return { machineModel: item }
+  })
   res.json({ type: true, data })
 }
 
@@ -49,14 +52,30 @@ async function encapRules(req, res, next) {
 }
 
 async function checkUpdate(req, res, next) {
-  const inVersion = Number(req.params.version);
-  const r = await CalculationService.checkUpdate(inVersion)
-  res.json(r)
+  try {
+    const inVersion = Number(req.params.version);
+    const checkResult = await CalculationService.checkUpdate(inVersion)
+    res.json(checkResult)
+  } catch (error) {
+    next(error)
+  }
+
+}
+
+async function listRulesByMachineModel(req, res, next) {
+  try {
+    const machineModel = req.params.machineModel;
+    const data = await CalculationService.listRulesByMachineModel(machineModel);
+    res.json({ type: true, data: data })
+  } catch (error) {
+    next(error)
+  }
 }
 
 module.exports = {
   addNewRules,
   listMachineModel,
   encapRules,
-  checkUpdate
+  checkUpdate,
+  listRulesByMachineModel
 }

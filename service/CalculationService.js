@@ -79,9 +79,9 @@ async function encapRules() {
 async function checkUpdate(inVersion) {
   const versionDoc = await CalculationRuleVersion.findOne();
   if (versionDoc && versionDoc.version !== inVersion) {
-    return true;
+    return 1;
   }
-  return false;
+  return 0;
 }
 
 module.exports = {
