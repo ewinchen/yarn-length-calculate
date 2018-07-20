@@ -84,9 +84,14 @@ async function checkUpdate(inVersion) {
   return 0;
 }
 
+async function listRulesByMachineModel(machineModel) {
+  return await CalculationRule.find({ machineModel: machineModel })
+}
+
 module.exports = {
   addNewRules,
   listMachineModel,
   encapRules,
-  checkUpdate
+  checkUpdate,
+  listRulesByMachineModel
 }
