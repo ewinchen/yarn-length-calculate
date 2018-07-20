@@ -1,0 +1,20 @@
+const express = require('express');
+const router = express.Router();
+const CalulationController = require('../controller/api/CalulationController')
+
+// GeneralController
+const GeneralController = require('../controller/api/GeneralController');
+// 基本CURD
+router.get('/list/:modelName', GeneralController.list);
+router.get('/show/:modelName/:id', GeneralController.show);
+router.post('/create/:modelName', GeneralController.create);
+router.post('/update/:modelName/:id', GeneralController.update);
+// 根据条件查询
+router.post('/listby/:modelName', GeneralController.listBy);
+router.post('/showby/:modelName', GeneralController.showBy);
+router.post('/updateby/:modelName', GeneralController.updateBy);
+
+// Custom Api
+router.post('/add_new_rules', CalulationController.addNewRules);
+
+module.exports = router;

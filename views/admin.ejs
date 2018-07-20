@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base href="/">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>智能化计算后台管理系统</title>
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/kendo.common-material.min.css" rel="stylesheet">
+  <link href="css/kendo.material.min.css" rel="stylesheet">
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/kendo.all.min.js"></script>
+  <style>
+    body {
+      background: #ECF0F5;
+      font-family: 微软雅黑;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row mb-3">
+      <div class="col p-3 shadow bg-info text-center text-white" style="font-weight: bold; font-size: 22px; letter-spacing: 5px">
+        智能化计算后台管理系统
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-3">
+        <div class="addRule">
+          <button class="btn btn-primary w-100 shadow" onclick="showAddNewRuleModal()">添加新机型</button>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-3">
+        <div class="shadow" id="machineModelGrid"></div>
+      </div>
+      <div class="col-9">
+        <div class="shadow" id="calculationRuleGrid"></div>
+      </div>
+    </div>
+
+
+    <div class="modal fade" id="exampleModalCenter" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content shadow">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalCenterTitle">新机型样本数据</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="machineModel">机型:</label>
+              <input type="text" class="form-control" id="machineModel" onchange="checkExist()" placeholder="请输入机型...">
+            </div>
+            <div class="form-group">
+              <label for="needleQty">针数:</label>
+              <div>
+                <input class="w-100" id="needleQty">
+              </div>
+            </div>
+            <div>
+              <label for="gear">齿轮:</label>
+              <div>
+                <input class="w-100" id="gear">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="yarnLength">纱长:</label>
+              <input type="number" class="form-control" id="yarnLength" placeholder="请输入纱长...">
+            </div>
+
+            <div class="form-group">
+              <label for="degree">刻度盘数:</label>
+              <input type="number" class="form-control" id="degree" placeholder="请输入刻度盘数...">
+            </div>
+
+
+            <!-- <div class="text-right">
+                <button type="button" onclick="addNewRule()" class="btn btn-primary">提交</button>
+              </div> -->
+          </div>
+          <div class="modal-footer">
+            <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+            <button type="button" class="btn btn-primary" onclick="addNewRule()">提交</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      $(function () {
+        $('#machineModelGrid').kendoGrid({
+          height: '500px',
+          selectable: true,
+          columns: [{
+            field: "machineModel",
+            title: "机型"
+          }],
+          dataSource: {
+            data: [{
+              machineModel: "DXss0932s",
+            },
+            {
+              machineModel: "tyDX0932",
+            },
+            {
+              machineModel: "DX0932",
+            },
+            {
+              machineModel: "SSX0932",
+            },
+            {
+              machineModel: "DX0932S",
+            },
+            {
+              machineModel: "ASADX0932",
+            },
+            {
+              machineModel: "WQ2-DX0932",
+            },
+            ]
+          }
+        });
+
+        $('#calculationRuleGrid').kendoGrid({
+          height: '500px',
+          selectable: true,
+          columns: [
+            {
+              field: "needleQty",
+              title: "针数"
+            },
+            {
+              field: "gear",
+              title: "齿轮"
+            },
+            {
+              field: "coefficient",
+              title: "系数"
+            },
+            {
+              field: "isSample",
+              title: "是否样本"
+            }
+          ],
+          dataSource: {
+            data: [
+              {
+                needleQty: 1200,        // 针数
+                gear: '33-69',             // 齿轮
+                coefficient: 1.45767,      // 系数
+                isSample: true,        // 是否样本
+              },
+              {
+                needleQty: 1200,        // 针数
+                gear: '33-69',             // 齿轮
+                coefficient: 1.45767,      // 系数
+                isSample: true,        // 是否样本
+              },
+              {
+                needleQty: 1200,        // 针数
+                gear: '33-69',             // 齿轮
+                coefficient: 1.45767,      // 系数
+                isSample: true,        // 是否样本
+              },
+              {
+                needleQty: 1200,        // 针数
+                gear: '33-69',             // 齿轮
+                coefficient: 1.45767,      // 系数
+                isSample: true,        // 是否样本
+              },
+              {
+                needleQty: 1200,        // 针数
+                gear: '33-69',             // 齿轮
+                coefficient: 1.45767,      // 系数
+                isSample: true,        // 是否样本
+              },
+              {
+                needleQty: 1200,        // 针数
+                gear: '33-69',             // 齿轮
+                coefficient: 1.45767,      // 系数
+                isSample: true,        // 是否样本
+              },
+            ]
+          }
+        })
+
+        $('#needleQty').kendoDropDownList({
+          filter: "contains",
+          dataTextField: "text",
+          dataValueField: "value",
+          dataSource: [
+            { text: "1032", value: "1032" },
+            { text: "1056", value: "1056" },
+            { text: "1200", value: "1200" },
+            { text: "1296", value: "1296" },
+            { text: "1320", value: "1320" },
+            { text: "1416", value: "1416" },
+            { text: "1500", value: "1500" },
+            { text: "1596", value: "1596" },
+            { text: "1656", value: "1656" },
+            { text: "1692", value: "1692" },
+            { text: "1740", value: "1740" },
+            { text: "1800", value: "1800" },
+            { text: "1860", value: "1860" },
+            { text: "1872", value: "1872" },
+            { text: "1920", value: "1920" },
+            { text: "1980", value: "1980" },
+            { text: "2064", value: "2064" },
+            { text: "2088", value: "2088" },
+            { text: "2232", value: "2232" },
+            { text: "2268", value: "2268" },
+            { text: "2460", value: "2460" },
+            { text: "2520", value: "2520" },
+            { text: "2592", value: "2592" },
+            { text: "2628", value: "2628" },
+            { text: "2640", value: "2640" },
+            { text: "3000", value: "3000" },
+          ]
+        });
+
+        $('#gear').kendoDropDownList({
+          filter: "startswith",
+          dataTextField: "text",
+          dataValueField: "value",
+          dataSource: [
+            { text: "26-67", value: "26-67" },
+            { text: "37-56", value: "37-56" },
+            { text: "43-50", value: "43-50" },
+            { text: "50-43", value: "50-43" },
+            { text: "56-37", value: "56-37" },
+            { text: "67-26", value: "67-26" }
+          ]
+        });
+
+
+
+
+      })
+
+      function showAddNewRuleModal() {
+        $('#machineModel').val('');
+        $('#needleQty').val('');
+        $('#gear').val('');
+        $('#yarnLength').val('');
+        $('#degree').val('');
+        $('#exampleModalCenter').modal('show');
+
+
+      }
+
+      function addNewRule() {
+        var machineModel = $('#machineModel').val();
+        var data = {
+          machineModel: $('#machineModel').val(),
+          needleQty: $('#needleQty').val(),
+          gear: $('#gear').val(),
+          yarnLength: $('#yarnLength').val(),
+          degree: $('#degree').val(),
+        }
+        $.ajax({
+          url: location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/api/add_new_rules',
+          method: 'POST',
+          contentType: 'application/json',
+          dataType: 'json',
+          data: JSON.stringify(data),
+          success: function (res) {
+            console.log(res)
+          },
+          error: function (err) {
+            console.log(err.responseText)
+          }
+        })
+
+        console.log(data);
+        $('#exampleModalCenter').modal('hide');
+      }
+    </script>
+</body>
+
+
+</html>
