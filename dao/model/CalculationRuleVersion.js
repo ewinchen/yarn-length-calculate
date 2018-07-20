@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const calculationRuleVersionSchema = new Schema({
-  version: String,
+  version: Number,
   updateTimes: Number,
   createAt: { type: Date, default: Date.now() },
 })

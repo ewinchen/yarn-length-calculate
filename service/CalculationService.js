@@ -41,12 +41,12 @@ async function addNewRules(data) {
 
   if (versionDoc) {
     return Promise.all([
-      CalculationRuleVersion.findOneAndUpdate({}, { updateTimes: versionDoc.updateTimes + 1, version: uuid() }),
+      CalculationRuleVersion.findOneAndUpdate({}, { updateTimes: versionDoc.updateTimes + 1, version: new Date().getTime() }),
       CalculationRule.create(pendingData)
     ])
   } else {
     return Promise.all([
-      CalculationRuleVersion.create({ updateTimes: 1, version: uuid() }),
+      CalculationRuleVersion.create({ updateTimes: 1, version: new Date().getTime() }),
       CalculationRule.create(pendingData)
     ])
   }
@@ -61,14 +61,32 @@ async function encapRules() {
   const listDoc = await CalculationRule.find({}, { _id: 0, machineModel: 1, needleQty: 1, gear: 1, coefficient: 1 })
   const versionDoc = await CalculationRuleVersion.findOne();
 
+  const list = listDoc.map(item => {
+    return {
+      m: item.machineModel,
+      n: item.needleQty,
+      g: item.gear,
+      c: item.coefficient
+    }
+  })
+
   return {
-    list: listDoc,
-    version: versionDoc ? versionDoc.version : ''
+    l: list,
+    v: versionDoc ? versionDoc.version : ''
   }
+}
+
+async function checkUpdate(inVersion) {
+  const versionDoc = await CalculationRuleVersion.findOne();
+  if (versionDoc && versionDoc.version !== inVersion) {
+    return true;
+  }
+  return false;
 }
 
 module.exports = {
   addNewRules,
   listMachineModel,
   encapRules,
+  checkUpdate
 }

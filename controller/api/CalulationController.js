@@ -41,15 +41,22 @@ async function encapRules(req, res, next) {
 
   try {
     const data = await CalculationService.encapRules();
-    res.json({ type: true, data: data })
+    res.json({ c: 1, d: data })
   } catch (error) {
-    next(error)
+    res.json({ c: 0, e: error })
   }
 
+}
+
+async function checkUpdate(req, res, next) {
+  const inVersion = Number(req.params.version);
+  const r = await CalculationService.checkUpdate(inVersion)
+  res.json(r)
 }
 
 module.exports = {
   addNewRules,
   listMachineModel,
-  encapRules
+  encapRules,
+  checkUpdate
 }
