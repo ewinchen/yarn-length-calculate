@@ -8,5 +8,6 @@ const admin = require('../controller/site/admin')
 router.get('/admin', admin.index);
 router.get('/admin/login', login.index);
 router.post('/admin/login', login.handleLogin);
+router.get('/admin/logout', login.handleLogout);
 
 module.exports = router;

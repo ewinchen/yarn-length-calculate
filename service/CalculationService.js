@@ -17,6 +17,13 @@ async function addNewRules(data) {
   const gearList = config.gearList;
 
   const pendingData = [];
+
+  const existData = await CalculationRule.findOne({ machineModel })
+
+  if (existData) {
+    await CalculationRule.remove({ machineModel });
+  }
+
   needleQtyList.forEach(needleQty => {
     gearList.forEach(gear => {
       const isSampleCurrent = (needleQty === needleQtySample && gear.name === gearSample) ? true : false;
@@ -53,8 +60,12 @@ async function addNewRules(data) {
 
 }
 
-function listMachineModel() {
-  return CalculationRule.distinct('machineModel');
+async function listMachineModel() {
+  const _data = await CalculationRule.distinct('machineModel');
+  const data = _data.sort().map(item => {
+    return { machineModel: item };
+  })
+  return data;
 }
 
 async function encapRules() {

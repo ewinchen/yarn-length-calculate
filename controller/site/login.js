@@ -15,8 +15,14 @@ function handleLogin(req, res, next) {
   }
 }
 
+function handleLogout(req, res, next) {
+  req.session.isAuthenticated = false;
+  res.redirect('/admin');
+}
+
 
 module.exports = {
   index,
-  handleLogin
+  handleLogin,
+  handleLogout
 }

@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>智能化计算后台管理系统</title>
-  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="shortcut icon" href="image/favicon.ico" type="image/x-icon">
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/kendo.common-material.min.css" rel="stylesheet">
   <link href="css/kendo.material.min.css" rel="stylesheet">
@@ -31,10 +31,14 @@
     </div>
     <div class="row mb-3">
       <div class="col-3">
-        <div class="addRule">
-          <button class="btn btn-primary w-100 shadow" onclick="showAddNewRuleModal()">添加新机型</button>
-        </div>
+        <button class="btn btn-primary w-100 shadow" onclick="showAddNewRuleModal()">添加新机型</button>
       </div>
+      <div class="col-1 ml-auto">
+        <form action="admin/logout" method="GET">
+          <button class="btn btn-danger w-100 shadow">登出</button>
+        </form>
+      </div>
+
     </div>
     <div class="row">
       <div class="col-3">
@@ -58,7 +62,7 @@
           <div class="modal-body">
             <div class="form-group">
               <label for="machineModel">机型:</label>
-              <input type="text" class="form-control" id="machineModel" onchange="checkExist()" placeholder="请输入机型...">
+              <input type="text" class="form-control" id="machineModel" onchange="checkExist(event.target.value)" placeholder="请输入机型...">
             </div>
             <div class="form-group">
               <label for="needleQty">针数:</label>
@@ -97,42 +101,54 @@
     </div>
 
     <script>
+      function getApiUrl() {
+        return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/api';
+      }
+
       $(function () {
+
         $('#machineModelGrid').kendoGrid({
           height: '500px',
+          sortable: true,
+          filterable: true,
           selectable: true,
           columns: [{
             field: "machineModel",
             title: "机型"
           }],
           dataSource: {
-            data: [{
-              machineModel: "DXss0932s",
+            autoSync: true,
+            batch: false,
+            transport: {
+              read: getApiUrl() + '/list_machine_model'
             },
-            {
-              machineModel: "tyDX0932",
-            },
-            {
-              machineModel: "DX0932",
-            },
-            {
-              machineModel: "SSX0932",
-            },
-            {
-              machineModel: "DX0932S",
-            },
-            {
-              machineModel: "ASADX0932",
-            },
-            {
-              machineModel: "WQ2-DX0932",
-            },
-            ]
+            schema: {
+              data: 'data'
+            }
+          },
+          change: function (e) {
+            var selectedRows = e.sender.select();
+            var dataItem = e.sender.dataItem(selectedRows[0]);
+
+            $.ajax({
+              url: getApiUrl() + '/list_rules_by_machine_model/' + dataItem.machineModel,
+              method: 'GET',
+              dataType: 'json',
+              success: function (e) {
+                $('#calculationRuleGrid').data('kendoGrid').setDataSource(
+                  new kendo.data.DataSource({
+                    data: e.data
+                  }))
+              }
+            })
+
           }
         });
 
         $('#calculationRuleGrid').kendoGrid({
           height: '500px',
+          sortable: true,
+          filterable: true,
           selectable: true,
           columns: [
             {
@@ -153,44 +169,7 @@
             }
           ],
           dataSource: {
-            data: [
-              {
-                needleQty: 1200,        // 针数
-                gear: '33-69',             // 齿轮
-                coefficient: 1.45767,      // 系数
-                isSample: true,        // 是否样本
-              },
-              {
-                needleQty: 1200,        // 针数
-                gear: '33-69',             // 齿轮
-                coefficient: 1.45767,      // 系数
-                isSample: true,        // 是否样本
-              },
-              {
-                needleQty: 1200,        // 针数
-                gear: '33-69',             // 齿轮
-                coefficient: 1.45767,      // 系数
-                isSample: true,        // 是否样本
-              },
-              {
-                needleQty: 1200,        // 针数
-                gear: '33-69',             // 齿轮
-                coefficient: 1.45767,      // 系数
-                isSample: true,        // 是否样本
-              },
-              {
-                needleQty: 1200,        // 针数
-                gear: '33-69',             // 齿轮
-                coefficient: 1.45767,      // 系数
-                isSample: true,        // 是否样本
-              },
-              {
-                needleQty: 1200,        // 针数
-                gear: '33-69',             // 齿轮
-                coefficient: 1.45767,      // 系数
-                isSample: true,        // 是否样本
-              },
-            ]
+            data: []
           }
         })
 
@@ -242,9 +221,6 @@
           ]
         });
 
-
-
-
       })
 
       function showAddNewRuleModal() {
@@ -253,6 +229,8 @@
         $('#gear').val('');
         $('#yarnLength').val('');
         $('#degree').val('');
+        $('#needleQty').data('kendoDropDownList').text('');
+        $('#gear').data('kendoDropDownList').text('')
         $('#exampleModalCenter').modal('show');
 
 
@@ -260,6 +238,7 @@
 
       function addNewRule() {
         var machineModel = $('#machineModel').val();
+
         var data = {
           machineModel: $('#machineModel').val(),
           needleQty: $('#needleQty').data('kendoDropDownList').text(),
@@ -267,23 +246,73 @@
           yarnLength: $('#yarnLength').val(),
           degree: $('#degree').val(),
         }
+
+        if (!data.machineModel) {
+          return alert('请输入机型...');
+        }
+
+        if (!data.needleQty) {
+          return alert('请选择针数...');
+        }
+
+        if (!data.gear) {
+          return alert('请选择齿轮...');
+        }
+
+        if (!data.yarnLength) {
+          return alert('请输入纱长...');
+        }
+
+        if (!data.degree) {
+          return alert('请输入刻度...');
+        }
+
         $.ajax({
-          url: location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/api/add_new_rules',
+          url: getApiUrl() + '/showby/calculation_rule',
           method: 'POST',
-          contentType: 'application/json',
           dataType: 'json',
-          data: JSON.stringify(data),
-          success: function (res) {
-            console.log(res)
+          contentType: 'application/json',
+          data: JSON.stringify({
+            machineModel: machineModel
+          }),
+          success: function (e) {
+            if (e.data) {
+              if (!confirm('机型已经存在，是否继续并覆盖？')) {
+                return $('#machineModel').val('')
+              }
+            }
+
+            $.ajax({
+              url: location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/api/add_new_rules',
+              method: 'POST',
+              contentType: 'application/json',
+              dataType: 'json',
+              data: JSON.stringify(data),
+              success: function (res) {
+                $('#machineModelGrid').data('kendoGrid').dataSource.read();
+                $('#exampleModalCenter').modal('hide');
+              },
+              error: function (err) {
+                console.log(err.responseText)
+              }
+            })
+
           },
-          error: function (err) {
-            console.log(err.responseText)
+          error: function (e) {
+            console.log(e.responseText)
           }
         })
 
-        console.log(data);
-        $('#exampleModalCenter').modal('hide');
+
+
+
       }
+
+      function checkExist(machineModel) {
+
+
+      }
+
     </script>
 </body>
 
