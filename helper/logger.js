@@ -8,7 +8,7 @@ const config = require('../config/config.default')
 const logger = new (winston.Logger)({
   transports: [
     new (winston.transports.Console)({
-      level: config.NODE_ENV === 'production' ? 'info' : 'silly',
+      level: config.YLC_NODE_ENV === 'production' ? 'info' : 'silly',
       colorize: true,
       json: false,
       prettyPrint: true,
@@ -16,7 +16,7 @@ const logger = new (winston.Logger)({
       handleExceptions: true,
     }),
     new (winston.transports.DailyRotateFile)({
-      level: config.NODE_ENV === 'production' ? 'info' : 'silly',
+      level: config.YLC_NODE_ENV === 'production' ? 'info' : 'silly',
       filename: path.join(__dirname, '../logs/.log')  ,
       datePattern: 'yyyy-MM-dd',
       prepend: true,

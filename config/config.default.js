@@ -1,7 +1,12 @@
 module.exports = {
-  NODE_ENV: process.env.NODE_ENV || 'development',
-  PORT: process.env.PORT || '3005',
-  DB_URL: process.env.DB_URL || 'mongodb://localhost/yarn_length_calculate',
+  // environment
+  YLC_NODE_ENV: process.env.YLC_NODE_ENV || 'development',
+  YLC_PORT: process.env.YLC_PORT || '3005',
+  YLC_DB_URL: process.env.YLC_DB_URL || 'mongodb://localhost/yarn_length_calculate',
+  YLC_ADMIN_USER: process.env.YLC_ADMIN_USER || 'admin',
+  YLC_ADMIN_PWD: process.env.YLC_ADMIN_PWD || 'esquel888',
+
+  // static
   needleQtyList: [
     1032,
     1056,
@@ -38,5 +43,6 @@ module.exports = {
     { name: '56-37', ratio: 1.51351351351351 },
     { name: '67-26', ratio: 2.57692307692308 }
   ],
+  
 
 }

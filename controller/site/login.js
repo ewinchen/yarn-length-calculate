@@ -1,3 +1,5 @@
+const config = require('../../config/config.default');
+
 function index(req, res, next) {
   if (req.session.isAuthenticated) {
     res.redirect('/admin')
@@ -7,7 +9,7 @@ function index(req, res, next) {
 }
 
 function handleLogin(req, res, next) {
-  if (req.body.name === 'admin' && req.body.password === '88888') {
+  if (req.body.name === config.YLC_ADMIN_USER && req.body.password === config.YLC_ADMIN_PWD) {
     req.session.isAuthenticated = true;
     res.redirect('/admin');
   } else {

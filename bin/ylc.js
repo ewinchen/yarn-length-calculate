@@ -13,7 +13,7 @@ const config = require('../config/config.default');
     await connectDB();
     logger.info('Database connection success')
 
-    let port = normalizePort(config.PORT);
+    let port = normalizePort(config.YLC_PORT);
     app.set('port', port);
 
     let server = http.createServer(app);

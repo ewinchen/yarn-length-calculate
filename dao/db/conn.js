@@ -11,7 +11,7 @@ const options = {
 };
 
 function connectDB() {
-  return mongoose.connect(config.DB_URL, options)
+  return mongoose.connect(config.YLC_DB_URL, options)
 }
 
 function disconnnectDB() {
