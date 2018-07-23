@@ -18,6 +18,8 @@
     body {
       background: #ECF0F5;
       font-family: 微软雅黑;
+      min-height: 100%;
+      position: relative;
     }
   </style>
 </head>
@@ -300,6 +302,7 @@
       }
 
       function addNewRule() {
+
         var machineModel = $('#machineModel').val();
 
         var data = {
@@ -334,6 +337,8 @@
           return alert('请输入刻度...');
         }
 
+        kendo.ui.progress($('#exampleModalCenter'), true);
+
         $.ajax({
           url: getApiUrl() + '/showby/calculation_rule',
           method: 'POST',
@@ -345,6 +350,7 @@
           success: function (e) {
             if (e.data) {
               if (!confirm('机型已经存在，是否继续并覆盖？')) {
+                kendo.ui.progress($('#exampleModalCenter'), false);
                 return $('#machineModel').val('')
               }
             }
@@ -356,17 +362,20 @@
               dataType: 'json',
               data: JSON.stringify(data),
               success: function (res) {
+                kendo.ui.progress($('#exampleModalCenter'), false);
                 $('#machineModelGrid').data('kendoGrid').dataSource.read();
                 $('#exampleModalCenter').modal('hide');
               },
               error: function (err) {
                 console.log(err.responseText)
+                kendo.ui.progress($('#exampleModalCenter'), false);
               }
             })
 
           },
           error: function (e) {
-            console.log(e.responseText)
+            console.log(e.responseText);
+            kendo.ui.progress($('#exampleModalCenter'), true);
           }
         })
 
