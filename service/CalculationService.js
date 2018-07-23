@@ -6,6 +6,7 @@ const config = require('../config/config.default');
 
 async function addNewRules(data) {
   const machineModel = data.machineModel;
+  const machineType = data.machineType;
   const needleQtySample = data.needleQty;
   const gearSample = data.gear;
   const gearRatioSample = config.gearList.find(item => item.name === data.gear).ratio;
@@ -34,6 +35,7 @@ async function addNewRules(data) {
 
       pendingData.push({
         machineModel: machineModel,                                  // 机型
+        machineType: machineType,                                    // 单双面
         needleQty: needleQtyCurrent,                                 // 针数
         gear: gearCurrent,                                           // 齿轮
         coefficient: coefficientCurrent,                             // 系数
@@ -61,20 +63,32 @@ async function addNewRules(data) {
 }
 
 async function listMachineModel() {
-  const _data = await CalculationRule.distinct('machineModel');
-  const data = _data.sort().map(item => {
-    return { machineModel: item };
-  })
+  // const _data = await CalculationRule.distinct('machineModel');
+  // const data = _data.sort().map(item => {
+  //   return { machineModel: item };
+  // })
+  // return data;
+
+  const _data = await CalculationRule.find({}, { machineModel: 1, machineType: 1, _id: 0 });
+
+  const _dataSet = new Set(_data.map(item => JSON.stringify(item)));
+  const _dataArray = Array.from(_dataSet).map(item => JSON.parse(item));
+
+  const data = _dataArray.sort((a, b) => {
+    if (a.machineModel.substring(0) < b.machineModel.substring(0)) return -1;
+    if (a.machineModel.substring(0) > b.machineModel.substring(0)) return 1;
+  });
   return data;
 }
 
 async function encapRules() {
-  const listDoc = await CalculationRule.find({}, { _id: 0, machineModel: 1, needleQty: 1, gear: 1, coefficient: 1 })
+  const listDoc = await CalculationRule.find({}, { _id: 0, machineModel: 1, machineType: 1, needleQty: 1, gear: 1, coefficient: 1 })
   const versionDoc = await CalculationRuleVersion.findOne();
 
   const list = listDoc.map(item => {
     return {
       m: item.machineModel,
+      t: item.machineType ? item.machineType : 1,
       n: item.needleQty,
       g: item.gear,
       c: item.coefficient
@@ -99,10 +113,21 @@ async function listRulesByMachineModel(machineModel) {
   return await CalculationRule.find({ machineModel: machineModel })
 }
 
+async function updateCoefficient(data) {
+  const { _id, coefficient } = data;
+  const versionDoc = await CalculationRuleVersion.findOne();
+  await Promise.all([
+    CalculationRule.update({ _id }, { coefficient, isEdited: true }),
+    CalculationRuleVersion.findOneAndUpdate({}, { updateTimes: versionDoc.updateTimes + 1, version: new Date().getTime() }),
+  ])
+  return CalculationRule.findById(_id);
+}
+
 module.exports = {
   addNewRules,
   listMachineModel,
   encapRules,
   checkUpdate,
-  listRulesByMachineModel
+  listRulesByMachineModel,
+  updateCoefficient
 }

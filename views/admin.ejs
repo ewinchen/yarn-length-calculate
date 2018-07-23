@@ -52,7 +52,7 @@
 
     <div class="modal fade" id="exampleModalCenter" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content shadow">
+        <div class="modal-content shadow" style="font-size: 14px !important">
           <div class="modal-header">
             <h5 class="modal-title" id="exampleModalCenterTitle">新机型样本数据</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -63,6 +63,13 @@
             <div class="form-group">
               <label for="machineModel">机型:</label>
               <input type="text" class="form-control" id="machineModel" onchange="checkExist(event.target.value)" placeholder="请输入机型...">
+            </div>
+            <div class="form-group">
+              <label for="machineType">单双面:</label>
+              <select class="form-control" name="machineType" id="machineType">
+                <option value="1">单面机</option>
+                <option value="2">双面机</option>
+              </select>
             </div>
             <div class="form-group">
               <label for="needleQty">针数:</label>
@@ -101,9 +108,6 @@
     </div>
 
     <script>
-      function getApiUrl() {
-        return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/api';
-      }
 
       $(function () {
 
@@ -112,10 +116,16 @@
           sortable: true,
           filterable: true,
           selectable: true,
-          columns: [{
-            field: "machineModel",
-            title: "机型"
-          }],
+          columns: [
+            {
+              field: "machineModel",
+              title: "机型"
+            },
+            {
+              field: "machineType",
+              title: "单双面"
+            },
+          ],
           dataSource: {
             autoSync: true,
             batch: false,
@@ -123,30 +133,65 @@
               read: getApiUrl() + '/list_machine_model'
             },
             schema: {
-              data: 'data'
+              data: 'data',
+              parse: function (response) {
+                response.data = response.data.map(item => {
+                  if (item.machineType === 1) {
+                    return { machineModel: item.machineModel, machineType: '单面机' }
+                  } else if (item.machineType === 2) {
+                    return { machineModel: item.machineModel, machineType: '双面机' }
+                  } else {
+                    return { machineModel: item.machineModel, machineType: item.machineType }
+                  }
+                })
+                return response;
+              }
             }
           },
           change: function (e) {
             var selectedRows = e.sender.select();
             var dataItem = e.sender.dataItem(selectedRows[0]);
 
-            $.ajax({
-              url: getApiUrl() + '/list_rules_by_machine_model/' + dataItem.machineModel,
-              method: 'GET',
-              dataType: 'json',
-              success: function (e) {
-                $('#calculationRuleGrid').data('kendoGrid').setDataSource(
-                  new kendo.data.DataSource({
-                    data: e.data
-                  }))
-              }
-            })
+            $('#calculationRuleGrid').data('kendoGrid').setDataSource(
+              new kendo.data.DataSource({
+                transport: {
+                  read: {
+                    url: getApiUrl() + '/list_rules_by_machine_model/' + dataItem.machineModel
+                  },
+                  update: {
+                    url: getApiUrl() + '/update_coefficient',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    dataType: 'json'
+                  },
+                  parameterMap: function (data, type) {
+                    if (type !== "read") {
+                      return kendo.stringify(data);
+                    }
+                  }
+                },
+                schema: {
+                  data: "data",
+                  model: {
+                    id: "_id",
+                    fields: {
+                      _id: { editable: false },
+                      needleQty: { editable: false },
+                      gear: { editable: false },
+                      coefficient: { type: "number", decimals: 6 },
+                      isSample: { editable: false },
+                      isEdited: { editable: false }
+                    }
+                  }
+                }
+              }))
 
           }
         });
 
         $('#calculationRuleGrid').kendoGrid({
           height: '500px',
+          editable: 'inline',
           sortable: true,
           filterable: true,
           selectable: true,
@@ -161,17 +206,34 @@
             },
             {
               field: "coefficient",
-              title: "系数"
+              title: "系数",
+              format: "{0:n6}",
+              editor: coefficientEditor
             },
             {
               field: "isSample",
               title: "是否样本"
-            }
+            },
+            {
+              field: "isEdited",
+              title: "手动修改"
+            },
+            { command: ["edit"], title: "&nbsp;" }
           ],
           dataSource: {
             data: []
-          }
+          },
+
         })
+
+        function coefficientEditor(container, options) {
+          $('<input data-bind="value:' + options.field + '"/>')
+            .appendTo(container)
+            .kendoNumericTextBox({
+              decimals: 7,
+              format: "n6"
+            });
+        }
 
         $('#needleQty').kendoDropDownList({
           filter: "contains",
@@ -225,6 +287,7 @@
 
       function showAddNewRuleModal() {
         $('#machineModel').val('');
+        $('#machineType').val('');
         $('#needleQty').val('');
         $('#gear').val('');
         $('#yarnLength').val('');
@@ -241,6 +304,7 @@
 
         var data = {
           machineModel: $('#machineModel').val(),
+          machineType: $('#machineType').val(),
           needleQty: $('#needleQty').data('kendoDropDownList').text(),
           gear: $('#gear').data('kendoDropDownList').text(),
           yarnLength: $('#yarnLength').val(),
@@ -249,6 +313,9 @@
 
         if (!data.machineModel) {
           return alert('请输入机型...');
+        }
+        if (!data.machineType) {
+          return alert('请选择单双面...');
         }
 
         if (!data.needleQty) {
@@ -312,6 +379,12 @@
 
 
       }
+
+      function getApiUrl() {
+        return location.protocol + '//' + location.hostname + (location.port ? ':' + location.port : '') + '/api';
+      }
+
+
 
     </script>
 </body>

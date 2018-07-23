@@ -2,6 +2,7 @@ const CalculationService = require('../../service/CalculationService')
 
 async function addNewRules(req, res, next) {
   const machineModel = req.body.machineModel;
+  const machineType = Number(req.body.machineType);
   const needleQty = Number(req.body.needleQty);
   const gear = req.body.gear;
   const yarnLength = Number(req.body.yarnLength);
@@ -19,6 +20,7 @@ async function addNewRules(req, res, next) {
   try {
     const data = await CalculationService.addNewRules({
       machineModel,
+      machineType,
       needleQty,
       gear,
       yarnLength,
@@ -69,10 +71,22 @@ async function listRulesByMachineModel(req, res, next) {
   }
 }
 
+async function updateCoefficient(req, res, next) {
+  try {
+
+    const body = req.body;
+    const data = await CalculationService.updateCoefficient(body);
+    res.json({ type: true, data: data });
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
   addNewRules,
   listMachineModel,
   encapRules,
   checkUpdate,
-  listRulesByMachineModel
+  listRulesByMachineModel,
+  updateCoefficient
 }

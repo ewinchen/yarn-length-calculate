@@ -20,5 +20,6 @@ router.get('/rules', CalulationController.encapRules);
 router.post('/add_new_rules', CalulationController.addNewRules);
 router.get('/list_machine_model', CalulationController.listMachineModel);
 router.get('/list_rules_by_machine_model/:machineModel', CalulationController.listRulesByMachineModel)
+router.post('/update_coefficient', CalulationController.updateCoefficient)
 
 module.exports = router;
