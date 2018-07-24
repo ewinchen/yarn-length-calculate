@@ -54,7 +54,7 @@ async function checkUpdate(req, res, next) {
   try {
     const inVersion = Number(req.params.version);
     const checkResult = await CalculationService.checkUpdate(inVersion)
-    res.json({ r: checkResult, m: { t: { 1: '单面机', 2: '双面机' } } })
+    res.json({ r: checkResult })
   } catch (error) {
     next(error)
   }

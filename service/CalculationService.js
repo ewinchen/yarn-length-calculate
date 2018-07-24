@@ -97,7 +97,8 @@ async function encapRules() {
 
   return {
     l: list,
-    v: versionDoc ? versionDoc.version : ''
+    v: versionDoc ? versionDoc.version : '',
+    m: { t: { 1: '单面机', 2: '双面机' } }
   }
 }
 
