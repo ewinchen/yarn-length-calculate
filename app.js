@@ -4,9 +4,10 @@ const favicon = require('serve-favicon')
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-
+const RedisStore = require('connect-redis')(session);
 
 const logger = require('./helper/logger');
+const config = require('./config/config.default')
 const apiRouter = require('./router/apiRouter');
 const siteRouter = require('./router/siteRouter');
 
@@ -27,10 +28,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // session
 app.use(session({
+  store: new RedisStore({
+    url: config.YLC_REDIS_URL,
+    prefix: 'ylc:sess:',
+    logErrors: err => logger.error(err)
+  }),
   name: 'ylc',
   secret: 'yarn length calcuate',
-  resave: false,
-  saveUninitialized: true,
+  resave: true,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 1000 * 60 * 30
+  }
 }))
 
 

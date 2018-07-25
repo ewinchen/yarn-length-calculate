@@ -17,6 +17,9 @@
       "name": "nodemon",
       "runtimeExecutable": "nodemon",
       "program": "${workspaceFolder}/bin/ylc",
+      "env": {
+        "YLC_REDIS_URL": "redis://:redis@127.0.0.1:6379/0"
+      },
       "restart": true,
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"

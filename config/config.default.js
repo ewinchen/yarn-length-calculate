@@ -5,6 +5,7 @@ module.exports = {
   YLC_DB_URL: process.env.YLC_DB_URL || 'mongodb://localhost/yarn_length_calculate',
   YLC_ADMIN_USER: process.env.YLC_ADMIN_USER || 'admin',
   YLC_ADMIN_PWD: process.env.YLC_ADMIN_PWD || 'esquel888',
+  YLC_REDIS_URL: process.env.YLC_REDIS_URL || 'redis://:Car666pool@127.0.0.1:6379/0',
 
   // static
   needleQtyList: [

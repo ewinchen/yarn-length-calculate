@@ -137,7 +137,7 @@
             schema: {
               data: 'data',
               parse: function (response) {
-                response.data = response.data.map(item => {
+                response.data = response.data.map(function (item) {
                   if (item.machineType === 1) {
                     return { machineModel: item.machineModel, machineType: '单面机' }
                   } else if (item.machineType === 2) {
